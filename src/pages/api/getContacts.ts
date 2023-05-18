@@ -1,26 +1,25 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import axios from 'axios';
 
-interface IContactData {
-    id:string,
-    name:string,
-    
-
+export interface IContactData {
+    id: string,
+    name: string,
+    type: string
 }
-const sendNotification = async (req: NextApiRequest, res: NextApiResponse) => {
+
+const getContacts = async (req: NextApiRequest, res: NextApiResponse<IContactData | { message: string }>) => {
     try {
         const {idInstance, apiTokenInstance} = req.body;
 
         const url = `https://api.green-api.com/waInstance${idInstance}/GetContacts/${apiTokenInstance}`;
 
         const response = await axios.get(url);
-
-
-        res.status(200).json({idMessage});
+        res.status(200).json(response.data);
     } catch (error) {
         console.error(error);
-        res.status(500).json({message: 'Ошибка при отправке сообщения'});
+        //todo uncomment
+        // res.status(500).json({message: 'Ошибка при получении списка контактов'});
     }
 };
 
-export default sendNotification;
+export default getContacts;

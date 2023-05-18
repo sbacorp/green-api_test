@@ -1,9 +1,16 @@
 import {NextApiRequest, NextApiResponse} from 'next';
 import axios from 'axios';
+
 type Data = {
     message: string
 };
-const getData = async (idInstance: string, apiTokenInstance: string) => {
+
+interface IAuth {
+    idInstance: string,
+    apiTokenInstance: string
+}
+
+const auth = async ({idInstance, apiTokenInstance}: IAuth) => {
     try {
         const res = await axios.get(
             `https://api.green-api.com/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`
@@ -22,7 +29,7 @@ export default async function handler(
         const {idInstance, apiTokenInstance} = req.body;
         // Ваш код для получения данных с использованием idInstance и apiTokenInstance
         // Например, можно использовать вашу функцию getData
-        const data = await getData(idInstance, apiTokenInstance);
+        const data = await auth({idInstance, apiTokenInstance});
         console.log(data)
         res.status(200).json({message: 'Успешно'});
     } catch (error) {
