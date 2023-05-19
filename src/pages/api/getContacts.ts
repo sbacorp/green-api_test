@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export interface IContactData {
     id: string,
-    name: string,
+    name?: string,
     type: string
 }
 

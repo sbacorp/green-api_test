@@ -149,11 +149,19 @@ ul li {
 }
 
 .aside {
+	position: relative;
 	overflow: hidden;
 	height: 100%;
 	width: 30%;
 	background: $bg-color;
-	position: relative;
+	&__history.empty {
+		position: absolute;
+		width: 100%;
+		top: 50%;
+		text-align: center;
+		font-size: 18px;
+		color: #fff;
+	}
 	&__header {
 		display: flex;
 		align-items: center;
@@ -180,17 +188,18 @@ ul li {
 
 .contact {
 	cursor: pointer;
-	&:hover,
-	&:focus {
-		background-color: $focus-color;
-	}
-
+	padding: 10px;
 	width: 100%;
 	height: 60px;
 	border-top: 1px solid $border-color;
 	background-color: $bg-color;
 	color: #fff;
 	padding: 0 0 0 30px;
+	&:hover,
+	&:focus {
+		background-color: $focus-color;
+	}
+
 	&__name {
 		color: white;
 		font-size: 18px;
@@ -198,21 +207,29 @@ ul li {
 }
 
 .chat {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
 	width: 100%;
 	height: 100vh;
 	overflow: hidden;
-	margin: 0;
-	display: flex;
-	flex-direction: column;
-
 	border-left: 1px solid $border-color;
+	&__empty {
+		width: 100%;
+		position: absolute;
+		top: 50%;
+		left: 0%;
+		text-align: center;
+		font-size: 24px;
+		color: #fff;
+	}
 	&__header {
-		background-color: $main-color;
 		display: flex;
 		align-items: center;
-		padding: 5px 16px;
-		width: 100%;
 		height: 60px;
+		padding: 5px 16px;
+		background-color: $main-color;
 	}
 	&__main {
 		@include scroll;
@@ -222,24 +239,19 @@ ul li {
 		flex-direction: column;
 		padding: 5px 40px;
 		background-color: $bg-color;
-		width: 100%;
-		max-height: 87%;
 	}
 	&__notification {
-		margin-bottom: 10px;
-		position: relative;
-		font-size: 14px;
-		color: #fff;
-		background-color: $green;
-		padding: 5px 10px;
-		min-width: 70px;
-		width: fit-content;
-		text-align: left;
-		border-radius: 5px;
 		display: flex;
 		align-items: center;
 		justify-content: space-around;
 		gap: 5px;
+		margin-bottom: 10px;
+		padding: 5px 10px;
+		border-radius: 5px;
+		background-color: $green;
+		font-size: 14px;
+		color: #fff;
+		text-align: left;
 		& span {
 			font-size: 10px;
 			align-self: flex-end;
@@ -272,5 +284,37 @@ ul li {
 			color: $button-color;
 			background-color: transparent;
 		}
+	}
+}
+
+.addChat {
+	position: absolute;
+	bottom: 2%;
+	right: 8%;
+	&__button {
+		background-color: transparent;
+		color: $button-color;
+	}
+	&__modal {
+		display: none;
+		& input{
+			padding: 5px 16px;
+			background: transparent;
+			color: #fff;
+			font: 16px;
+
+		}
+	}
+	&__modal.active {
+		position: absolute;
+		top: 0%;
+		right: 120%;
+		display: flex;
+		gap: 10px;
+		width: 200px;
+		height: 40px;
+		border-radius: 10px;
+		background-color: #005c4b;
+
 	}
 }

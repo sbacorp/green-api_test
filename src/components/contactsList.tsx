@@ -3,6 +3,7 @@ import { IContactData } from "@/pages/api/getContacts";
 import { AuthContext } from "@/lib/authContext";
 import fetchContacts from "@/lib/fetchContacts";
 import { ChatContext } from "@/lib/chatContext";
+import Contact from "./Contact";
 
 const ContactsList = () => {
 	const { idInstance, apiTokenInstance } = useContext(AuthContext);
@@ -19,10 +20,7 @@ const ContactsList = () => {
 			{contacts
 				.filter((el) => el.type !== "group")
 				.map((el, i) => (
-					<div className="contact" key={i} onClick={() => setActiveChat(el)}>
-						<p className="contact__name">{el.name}</p>
-						<p className="contact__number">{el.id.split("@")[0]}</p>
-					</div>
+					<Contact key={i} contact={el} setActiveChat={setActiveChat} />
 				))}
 		</div>
 	);

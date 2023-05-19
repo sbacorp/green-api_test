@@ -1,13 +1,27 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ContactsList from "@/components/contactsList";
 import { IContactData } from "@/pages/api/getContacts";
 import Contact from "./Contact";
 import { ChatContext } from "@/lib/chatContext";
+import { ChatsHistoryContext } from "@/lib/chatsHistoryContext";
 
 const Aside = () => {
+	const { chatsHistory, updateChatsHistory } = useContext(ChatsHistoryContext);
 	const { setActiveChat } = useContext(ChatContext);
-	const [chatsHistory, setChatsHistory] = useState<IContactData[]>([]);
 	const [showContacts, setShowContacts] = useState<boolean>(false);
+	const [isAddActive, setIsAddActive] = useState(false);
+	const [newChatNumber, setNewChatNumber] = useState("");
+	const onAddChat = () => {
+		//можно добавить валидацию
+
+		updateChatsHistory({
+			id: newChatNumber.replace(/\D/g, "") + "@c.us",
+			type: "user",
+		});
+		setIsAddActive(false);
+		setNewChatNumber("");
+	};
+
 	return (
 		<div className="aside">
 			<header className="aside__header">
@@ -24,6 +38,7 @@ const Aside = () => {
 						/>
 					</svg>
 				</div>
+
 				<button onClick={() => setShowContacts(!showContacts)}>
 					<svg
 						viewBox="0 0 24 24"
@@ -44,17 +59,46 @@ const Aside = () => {
 				</button>
 			</header>
 			{showContacts && <ContactsList />}
-			{chatsHistory.length ? (
-				chatsHistory.map((el, i) => (
-					<Contact
-						key={i}
-						contact={el}
-						setActiveChat={() => setActiveChat(el)}
+			<div className="aside__history">
+				{chatsHistory.length
+					? chatsHistory.map((el, i: number) => (
+							<Contact
+								key={i}
+								contact={el}
+								setActiveChat={() => setActiveChat(el)}
+							/>
+					  ))
+					: !showContacts && (
+							<p className="aside__history empty">История чатов пуста</p>
+					  )}
+			</div>
+			<div className="addChat">
+				<button
+					className="addChat__button"
+					onClick={() => setIsAddActive(!isAddActive)}
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						height="36"
+						viewBox="0 24 960 960"
+						width="36"
+						fill="currentColor"
+					>
+						<path d="M450 656h60V526h130v-60H510V336h-60v130H320v60h130v130ZM80 976V236q0-23 18-41.5t42-18.5h680q23 0 41.5 18.5T880 236v520q0 23-18.5 41.5T820 816H240L80 976Zm60-145 75-75h605V236H140v595Zm0-595v595-595Z" />
+					</svg>
+				</button>
+				<div
+					className={isAddActive ? "addChat__modal active" : "addChat__modal"}
+				>
+					<input
+						type="text"
+						onKeyDown={(e) => newChatNumber && e.key === "Enter" && onAddChat()}
+						value={newChatNumber}
+						onChange={(e) => setNewChatNumber(e.target.value)}
+						placeholder="Введите номер"
 					/>
-				))
-			) : (
-				<p>История чатов пуста</p>
-			)}
+				</div>
+			</div>
 		</div>
 	);
 };

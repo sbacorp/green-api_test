@@ -13,7 +13,7 @@ type SendedMessage = {
 };
 export default function Home() {
 	const { idInstance, apiTokenInstance } = useContext(AuthContext);
-	const { activeChat, setActiveChat } = useContext(ChatContext);
+	const { activeChat } = useContext(ChatContext);
 	const [message, setMessage] = useState<string>("");
 	const PollingInterval = 10000;
 	const [notifications, setNotifications] = useState<
@@ -42,9 +42,10 @@ export default function Home() {
 				console.log(e);
 			}
 		}
+		setMessage("");
 	};
 
-	const getNotifications = async () => {
+	const pollingNotifications = async () => {
 		if (activeChat) {
 			try {
 				const response = await axios.get("/api/ReceiveNotification", {
@@ -53,8 +54,11 @@ export default function Home() {
 						apiTokenInstance: apiTokenInstance,
 					},
 				});
-				console.log(response.data);
-				if (response.data)
+
+				if (
+					response.data &&
+					response.data.body.messageData.typeMessage === "textMessage"
+				)
 					setNotifications((notifications) => [
 						...notifications,
 						response.data.body,
@@ -67,16 +71,12 @@ export default function Home() {
 
 	useEffect(() => {
 		if (activeChat) {
-			const intervalId = setInterval(getNotifications, PollingInterval);
-
+			const intervalId = setInterval(pollingNotifications, PollingInterval);
 			return () => {
 				clearInterval(intervalId);
 			};
 		}
 	}, [activeChat]);
-	useEffect(() => {
-		console.log(notifications);
-	}, [notifications]);
 
 	return (
 		<>
@@ -93,7 +93,9 @@ export default function Home() {
 					{activeChat ? (
 						<>
 							<header className="chat__header">
-								<p className="contact__name">{activeChat.name}</p>
+								<p className="contact__name">
+									{activeChat.name ? activeChat.name : '+'+activeChat.id.split('@')[0]}
+								</p>
 							</header>
 							<div className="chat__main">
 								{notifications &&
@@ -124,6 +126,9 @@ export default function Home() {
 							</div>
 							<div className="chat__send">
 								<input
+									onKeyDown={(e) =>
+										message && e.key === "Enter" && sendMessage()
+									}
 									value={message}
 									onChange={(e) => setMessage(e.target.value)}
 									type="text"
@@ -132,10 +137,8 @@ export default function Home() {
 								<button
 									onClick={() => {
 										sendMessage();
-										setMessage("");
 									}}
 								>
-									{" "}
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										height="24"
@@ -149,7 +152,7 @@ export default function Home() {
 							</div>
 						</>
 					) : (
-						"Выберите чат"
+						<p className="chat__empty">Выберите чат чтобы начать переписку</p>
 					)}
 				</div>
 			</main>
